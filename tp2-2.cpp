@@ -324,7 +324,7 @@ ostream & operator<<(ostream& stream, Etudiant* etudiant){
     if(etudiant->getNoteAmount()){
         stream << "\n\tNotes : ";
         for(int i = 0; i < etudiant->getNoteAmount(); i++){
-            stream << "\n\t\tNote " << (i+1) << " : " <<etudiant->getNote(i) << endl;
+            stream << "\n\t\tNote " << (i+1) << " : " <<etudiant->getNote(i);
         }
     }
     return stream;
