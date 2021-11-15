@@ -275,7 +275,7 @@ Etudiant::~Etudiant(){
 void Etudiant::saisie(){
     cout << "Veuillez renseigner le nom de l'étudiant : ";
     getline(cin, this->name);
-    cout << "Combien de note voulez-vous entrer (MAX 3)? ";
+    cout << "Combien de note voulez-vous entrer (MAX " << MAXNOTE << ") ?";
     cin >> this->noteAmount;
     this->noteAmount = min(this->noteAmount, 3);
     for(int i = 0; i < this->noteAmount; i++){
@@ -351,8 +351,9 @@ istream & operator>>(istream& stream, Etudiant* etudiant){
     cout << "Veuillez renseigner le nom de l'étudiant : ";
     getline(stream, temp);
     etudiant->setName(temp);
-    cout << "Combien de note voulez-vous entrer ? ";
+    cout << "Combien de note voulez-vous entrer ? (MAX " << MAXNOTE << ")";
     stream >> tempN;
+    tempN = min(tempN, 3);
     for(int i = 0; i < tempN; i++){
         cout << "Veuillez entrer la note " << (i+1) << " : "; 
         stream >> tempN2;
