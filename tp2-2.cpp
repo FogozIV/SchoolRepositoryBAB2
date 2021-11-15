@@ -89,7 +89,6 @@ void readFile(LV&, string);
 
 
 const string states[] = {"etudiant", "prof"};
-const string filenames[] = {"Etudiant.txt", "Prof.txt"};
 
 int main(){
     vector<Prof*> profs;
@@ -115,7 +114,8 @@ void displayMenu(string current_state){
     cout << "2. Ajouter au debut et Afficher (" << current_state << ")" << endl;
     cout << "3. Supprimer au debut et Afficher (" << current_state << ")" << endl;
     cout << "4. Creer liste1 contenant les noms et Afficher (" << current_state << ")" << endl; 
-    cout << "5. Quitter" << endl;
+    cout << "5. Lire depuis un fichier" << endl;
+    cout << "6. Quitter" << endl;
 }
 
 template<typename Type, typename LV>
@@ -156,7 +156,7 @@ void deleteIndex(LV &array, int index){
         cout << "Mauvais index" << endl;
         return;
     }
-    auto a = array.begin();
+    auto a = array.begin(); //iterator
     advance(a, index);
     delete (*a);
     array.erase(a);
@@ -200,10 +200,20 @@ void mainLoop(LV &array, int& state, bool& loop, list<string>& strings, UV &othe
             display<list<string>>(strings);
             break;
         case 5:
+            {
+                string filename;
+                cout << "Quel est le nom du fichier ? ";
+                cin >> filename;
+                cin.ignore(); //ignore the \n
+                readFile<Type, LV>(array, filename);
+                display<LV>(array);
+                break;
+            }
+        case 6:
             loop = false;
             break;
         default:
-            cout << "Veuillez entrer un nombre entre 0 et 5" << endl;
+            cout << "Veuillez entrer un nombre entre 0 et 6" << endl;
             break;
     }
 }
@@ -247,7 +257,7 @@ void Prof::saisie(){
 }
 
 void Prof::affichage(){
-    cout << "Prof:\n\tId : " << this->id << "\n\tNom : " << this->name << "\n\tService : " << this->service;
+    cout << "Prof:\n\tId : " << this->id << "\n\tNom : " << this->name << "\n\tService : " << this->service << "\n";
 }
 
 
@@ -282,6 +292,7 @@ void Etudiant::affichage(){
         for(int i = 0; i < this->noteAmount; i++){
         cout << "Note " << (i+1) << " : " << notes[i];
     }
+    cout << "\n";
 }
 
 ostream & operator<<(ostream& stream, Prof* prof){
