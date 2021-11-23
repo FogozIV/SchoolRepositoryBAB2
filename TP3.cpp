@@ -18,6 +18,8 @@ class Personne{
         string className;
     public:
         Personne(){
+            static int current_id = 1;
+            this->id = current_id++;
             this->className = "Personne";
         }
         void saisie();
@@ -31,54 +33,11 @@ class Personne{
         void setName(string name){
             this->name = name;
         }
-        static bool nameSort(Personne a, Personne b){
-            return a.name < b.name;
-        }
         string getClassName(){
             return this->className;
         }
-};
-
-class Etudiant: public Personne{
-    protected:
-        int notes[MAXNOTE];
-        int noteAmount = 0;
-        float moyenne = -1;
-        string year;
-    public:
-        Etudiant();
-        ~Etudiant();
-        void saisie();
-        void affichage();
-        int getNoteAmount(){
-            return this->noteAmount;
-        }
-        void addNote(int note){
-            if(noteAmount>=MAXNOTE){
-                return;
-            }
-            this->notes[this->noteAmount++] = note;
-        }
-
-        float getMoyenne(){
-            return this->moyenne;
-        }
-
-        void setMoyenne(float moyenne){
-            this->moyenne = moyenne;
-        }
-
-        int getNote(int index){
-            return this->notes[index];
-        }
-        string getYear(){
-            return this->year;
-        }
-        void setYear(string year){
-            this->year = year;
-        }
-        static bool complexSort(Etudiant a, Etudiant b){
-            return a.year == b.year ? a.moyenne > b.moyenne : a.year < b.year;
+        bool operator<(Personne b){
+            return this->name < b.name;
         }
 };
 
@@ -98,6 +57,8 @@ class Prof: public Personne{
         }
 };
 
+class Etudiant;
+
 class Direction : public Prof{
     protected:
         string title;
@@ -111,13 +72,42 @@ class Direction : public Prof{
         void setTitle(string title){
             this->title = title;
         }
-        float calculateMoyenne(Etudiant e){
-            float m = 0;
-            for(int i = 0; i < e.getNoteAmount(); i++){
-                m += e.getNote(i);
+        float calculateMoyenne(Etudiant e);
+};
+
+class Etudiant: public Personne{
+    protected:
+        int notes[MAXNOTE];
+        int noteAmount = 0;
+        float moyenne = -1;
+        string year;
+        friend float Direction::calculateMoyenne(Etudiant);
+        friend ostream & operator<<(ostream&, Etudiant&);
+    public:
+        Etudiant();
+        ~Etudiant();
+        void saisie();
+        void affichage();
+        void addNote(int note){
+            if(noteAmount>=MAXNOTE){
+                return;
             }
-            m/=e.getNoteAmount();
-            return e.getNoteAmount() != 0 ? m : -1;
+            this->notes[this->noteAmount++] = note;
+        }
+        float getMoyenne(){
+            return this->moyenne;
+        }
+        void setMoyenne(float moyenne){
+            this->moyenne = moyenne;
+        }
+        string getYear(){
+            return this->year;
+        }
+        void setYear(string year){
+            this->year = year;
+        }
+        static bool complexSort(Etudiant a, Etudiant b){
+            return a.year == b.year ? a.moyenne > b.moyenne : a.year < b.year;
         }
 };
 
@@ -139,13 +129,6 @@ void operations(vector<Prof>&, list<Etudiant>&, int&, bool&);
 
 template<typename Type, typename LV>
 void readFile(LV&, string);
-
-template<typename Comparator>
-void sort(list<Etudiant>&, Comparator);
-
-template<typename Comparator>
-void sort(vector<Prof>&, Comparator);
-
 
 const string states[] = {"etudiant", "prof"};
 
@@ -224,15 +207,15 @@ void operations(vector<Prof>& profs, list<Etudiant>& etudiants, int& state, bool
             }
         case 5:
             if(!state){
-                sort(etudiants, Personne::nameSort);
+                etudiants.sort();
                 display<list<Etudiant>>(etudiants);
             }else{
-                sort(profs, Personne::nameSort);
+                sort(profs.begin(), profs.end());
                 display<vector<Prof>>(profs);
             }
             break;
         case 6:
-            sort(etudiants, Etudiant::complexSort);
+            etudiants.sort(Etudiant::complexSort);
             display<list<Etudiant>>(etudiants);
             break;
         case 7:
@@ -270,17 +253,6 @@ void displayMenu(string current_state){
     cout << "6. Afficher la liste des étudiants par année scolaire et par ordre décroissant de leur moyenne" << endl;
     cout << "7. Lire depuis un fichier (" << current_state << ")" << endl;
     cout << "8. Quitter" << endl;
-}
-
-
-template<typename Comparator>
-void sort(list<Etudiant>& array, Comparator comp){
-    array.sort(comp);
-}
-
-template<typename Comparator>
-void sort(vector<Prof>& array, Comparator comp){
-    sort(array.begin(), array.end(), comp);
 }
 
 template<typename Type, typename LV>
@@ -355,14 +327,9 @@ void Personne::affichage(){
     cout << className << ":\n\tId : " << this->id << "\n\tNom : " << this->name << endl; 
 }
 
-
-
 //Implémentations Prof
-
 Prof::Prof(){
-    static int current_id = 1;
     this->className = "Prof";
-    this->id = current_id++;
 }
 Prof::~Prof(){
     //cout << "Le prof avec l'id : " << this->id << ", le nom : " << this->name << " et le service : "<< this->service << " a été détruit " << endl;
@@ -379,13 +346,9 @@ void Prof::affichage(){
     cout << "\tService : " << this->service << "\n";
 }
 
-
-
 //Implémentation étudiant
 Etudiant::Etudiant(){
-    static int current_id = 1;
     this->className = "Etudiant";
-    this->id = current_id++;
 }
         
 Etudiant::~Etudiant(){
@@ -420,9 +383,7 @@ void Etudiant::affichage(){
 }
 
 Direction::Direction(){
-    static int current_id = 1;
     this->className = "Direction";
-    this->id = current_id++;
 }
 
 void Direction::saisie(){
@@ -434,6 +395,15 @@ void Direction::saisie(){
 void Direction::affichage(){
     Prof::affichage();
     cout << "\tTitre : " << this->title << "\n";
+}
+
+float Direction::calculateMoyenne(Etudiant e){
+    float m = 0;
+    for(int i = 0; i < e.noteAmount; i++){
+        m += e.notes[i];
+    }
+    m/=e.noteAmount;
+    return e.noteAmount != 0 ? m : -1;
 }
 
 ostream & operator<<(ostream& stream, Personne &personne){
@@ -448,10 +418,10 @@ ostream & operator<<(ostream& stream, Prof &prof){
 ostream & operator<<(ostream& stream, Etudiant& etudiant){
     Personne p = (Personne) etudiant;
     stream << p << "\n\tAnnée d'étude : " << etudiant.getYear();
-    if(etudiant.getNoteAmount()){
+    if(etudiant.noteAmount){
         stream << "\n\tNotes : ";
-        for(int i = 0; i < etudiant.getNoteAmount(); i++){
-            stream << "\n\t\tNote " << (i+1) << " : " <<etudiant.getNote(i);
+        for(int i = 0; i < etudiant.noteAmount; i++){
+            stream << "\n\t\tNote " << (i+1) << " : " <<etudiant.notes[i];
         }
     }
     if(etudiant.getMoyenne() != -1){
