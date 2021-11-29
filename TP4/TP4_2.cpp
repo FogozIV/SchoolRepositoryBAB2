@@ -11,13 +11,7 @@
 
 using namespace std;
 
-class Personne{
-    //Empty this is for fun :)
-
-};
-
-
-class Etudiant : Personne{
+class Etudiant {
     static int SPACE_ID;
     string id;
     static int SPACE_NAME;
@@ -72,7 +66,7 @@ int Etudiant::SPACE_ID = 4;
 int Etudiant::SPACE_NAME = 8;
 
 
-class Prof : Personne{
+class Prof{
     static int SPACE_NAME;
     string name;
     static int SPACE_MATIERE;
