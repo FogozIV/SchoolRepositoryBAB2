@@ -11,7 +11,13 @@
 
 using namespace std;
 
-class Etudiant {
+class Personne{
+    //Empty this is for fun :)
+
+};
+
+
+class Etudiant : Personne{
     static int SPACE_ID;
     string id;
     static int SPACE_NAME;
@@ -66,7 +72,7 @@ int Etudiant::SPACE_ID = 4;
 int Etudiant::SPACE_NAME = 8;
 
 
-class Prof{
+class Prof : Personne{
     static int SPACE_NAME;
     string name;
     static int SPACE_MATIERE;
@@ -227,10 +233,9 @@ ifstream& operator>>(ifstream& stream, Etudiant& e){
     stream.ignore(); //ignore the ";"
     for(int i =0; i < nbr; i++){
         stream >> temp;
-        stream.ignore();//ignore the ";"
+        stream.ignore();//ignore the ";" or "\n"
         e.addNote(temp);
     }
-    stream.ignore(); //ignore the "\n"
     return stream;
 }
 
