@@ -1,0 +1,8 @@
+Toutnesol; 4 ; Math; Philo; Chimie; Informatique
+Einstein; 2 ; Physique; Méca
+Bruce Lee; 4 ; kung fu; Karaté; Tai Chi Chuan; Gung-Li
+Joseph-Louis Lagrange; 3; Mat; Méca; Physique
+Pierre-Simon de Laplace; 4; Astronomie; Math; Physique; Chimie
+Antoine Laurent de Lavoisier; 3; Chimie; Physique; Sciences
+Siméon Denis Poisson; 2; Math; Physique
+Toutnesol; 1 ; Informatique
